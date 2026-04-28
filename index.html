@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DevTech-EDU - Painel LMS</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <style>
+        .nav-tabs .nav-link { color: #495057; }
+        .nav-tabs .nav-link.active { font-weight: bold; border-bottom: 2px solid transparent; }
+        #admin-tab.active { border-bottom-color: #0d6efd; color: #0d6efd; }
+        #aluno-tab.active { border-bottom-color: #198754; color: #198754; }
+        #financeiro-tab.active { border-bottom-color: #ffc107; color: #b38600; }
+    </style>
+</head>
+<body class="bg-light">
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4 shadow-sm">
+        <div class="container">
+            <a class="navbar-brand fw-bold" href="#">🎓 DevTech-EDU Admin</a>
+        </div>
+    </nav>
+
+    <main class="container mb-5">
+        
+        <div class="text-center mb-4">
+            <h2 class="fw-bold">Painel do Sistema</h2>
+            <p class="text-muted">Gerenciamento completo: Acadêmico, Alunos e Financeiro.</p>
+        </div>
+
+        <ul class="nav nav-tabs" id="sistemaTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="admin-tab" data-bs-toggle="tab" data-bs-target="#admin-content" type="button" role="tab">
+                    ⚙️ Administração
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="aluno-tab" data-bs-toggle="tab" data-bs-target="#aluno-content" type="button" role="tab">
+                    🎓 Área do Aluno
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="financeiro-tab" data-bs-toggle="tab" data-bs-target="#financeiro-content" type="button" role="tab">
+                    💳 Financeiro & Loja
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content bg-white p-4 border border-top-0 rounded-bottom shadow-sm" id="tabContent">
+            
+            <div class="tab-pane fade show active" id="admin-content" role="tabpanel">
+                <h4 class="mb-4 text-primary">Gestão Acadêmica</h4>
+                <hr>
+
+                <h5 class="mt-4 text-secondary">1. Categorias</h5>
+                <div class="row mb-5">
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-primary">
+                            <div class="card-body">
+                                <input type="text" id="catNome" class="form-control mb-2" placeholder="Nome da Categoria">
+                                <textarea id="catDesc" class="form-control mb-3" placeholder="Descrição"></textarea>
+                                <button class="btn btn-primary w-100" onclick="catCtrl.salvar()">Salvar Categoria</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-sm table-bordered table-hover">
+                            <thead class="table-light"><tr><th>ID</th><th>Nome</th><th>Descrição</th></tr></thead>
+                            <tbody id="tabela-categorias"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h5 class="mt-4 text-secondary">2. Cursos</h5>
+                <div class="row mb-5">
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-success">
+                            <div class="card-body">
+                                <input type="text" id="curTitulo" class="form-control mb-2" placeholder="Título do Curso">
+                                <select id="curCategoria" class="form-select mb-2"><option value="">Selecione a Categoria...</option></select>
+                                <select id="curNivel" class="form-select mb-2">
+                                    <option value="Iniciante">Iniciante</option>
+                                    <option value="Intermediário">Intermediário</option>
+                                    <option value="Avançado">Avançado</option>
+                                </select>
+                                <div class="row">
+                                    <div class="col-6"><input type="number" id="curAulas" class="form-control mb-3" placeholder="Qtd Aulas"></div>
+                                    <div class="col-6"><input type="number" id="curHoras" class="form-control mb-3" placeholder="Carga (h)"></div>
+                                </div>
+                                <button class="btn btn-success w-100" onclick="cursoCtrl.salvar()">Salvar Curso</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-sm table-bordered table-hover">
+                            <thead class="table-light"><tr><th>Título</th><th>Categoria</th><th>Nível</th><th>Horas</th></tr></thead>
+                            <tbody id="tabela-cursos"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h5 class="mt-4 text-secondary">3. Módulos</h5>
+                <div class="row mb-5">
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-warning">
+                            <div class="card-body">
+                                <select id="modCurso" class="form-select mb-2"><option value="">Selecione o Curso...</option></select>
+                                <input type="text" id="modTitulo" class="form-control mb-2" placeholder="Nome do Módulo">
+                                <input type="number" id="modOrdem" class="form-control mb-3" placeholder="Ordem (Ex: 1, 2)">
+                                <button class="btn btn-warning w-100 text-dark fw-bold" onclick="moduloCtrl.salvar()">Salvar Módulo</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-sm table-bordered table-hover">
+                            <thead class="table-light"><tr><th>Curso Pertencente</th><th>Nome do Módulo</th><th>Ordem</th></tr></thead>
+                            <tbody id="tabela-modulos"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <h5 class="mt-4 text-secondary">4. Aulas</h5>
+                <div class="row mb-2">
+                    <div class="col-md-4">
+                        <div class="card shadow-sm border-dark">
+                            <div class="card-body">
+                                <select id="aulaModulo" class="form-select mb-2"><option value="">Selecione o Módulo...</option></select>
+                                <input type="text" id="aulaTitulo" class="form-control mb-2" placeholder="Título da Aula">
+                                <select id="aulaTipo" class="form-select mb-2">
+                                    <option value="Vídeo">Vídeo</option><option value="Texto">Texto</option><option value="Quiz">Quiz</option>
+                                </select>
+                                <input type="url" id="aulaUrl" class="form-control mb-3" placeholder="Link do Conteúdo">
+                                <button class="btn btn-dark w-100" onclick="aulaCtrl.salvar()">Salvar Aula</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <table class="table table-sm table-bordered table-hover">
+                            <thead class="table-light"><tr><th>Módulo Pertencente</th><th>Título da Aula</th><th>Tipo</th></tr></thead>
+                            <tbody id="tabela-aulas"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="aluno-content" role="tabpanel">
+                <h4 class="mb-4 text-success">Área do Aluno: Matrículas e Progresso</h4>
+                <hr>
+                
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm border-success">
+                            <div class="card-header bg-success text-white"><h5 class="mb-0">1. Cadastrar Aluno</h5></div>
+                            <div class="card-body">
+                                <input type="text" id="usuNome" class="form-control mb-2" placeholder="Nome Completo">
+                                <input type="email" id="usuEmail" class="form-control mb-2" placeholder="E-mail">
+                                <input type="password" id="usuSenha" class="form-control mb-3" placeholder="Senha">
+                                <button class="btn btn-success w-100" onclick="alunoCtrl.cadastrar()">Criar Conta</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8 mb-4">
+                        <div class="card shadow-sm">
+                            <div class="card-header bg-light"><h5 class="mb-0">2. Realizar Matrícula</h5></div>
+                            <div class="card-body">
+                                <div class="row">
+                                    <div class="col-md-5">
+                                        <select id="matUsuario" class="form-select mb-2"><option value="">Selecione o Aluno...</option></select>
+                                    </div>
+                                    <div class="col-md-5">
+                                        <select id="matCurso" class="form-select mb-2"><option value="">Selecione o Curso...</option></select>
+                                    </div>
+                                    <div class="col-md-2">
+                                        <button class="btn btn-primary w-100" onclick="alunoCtrl.matricular()">Matricular</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h5 class="mt-4 text-secondary">Meu Progresso</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered table-hover">
+                                <thead class="table-light"><tr><th>Aluno</th><th>Curso Inscrito</th><th>Status</th><th>Certificado</th></tr></thead>
+                                <tbody id="tabela-matriculas"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="financeiro-content" role="tabpanel">
+                <h4 class="mb-4 text-warning" style="color: #b38600 !important;">Checkout de Planos</h4>
+                <hr>
+
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm border-warning">
+                            <div class="card-header bg-warning text-dark"><h5 class="mb-0 fw-bold">Simulador de Pagamento</h5></div>
+                            <div class="card-body">
+                                <select id="payUsuario" class="form-select mb-3"><option value="">Quem está pagando?</option></select>
+                                
+                                <label class="fw-bold small">Escolha o Plano:</label>
+                                <select id="payPlano" class="form-select mb-3">
+                                    </select>
+
+                                <label class="fw-bold small">Método de Pagamento:</label>
+                                <select id="payMetodo" class="form-select mb-4">
+                                    <option value="Cartão de Crédito">Cartão de Crédito</option>
+                                    <option value="Pix">Pix (QR Code)</option>
+                                    <option value="Boleto">Boleto Bancário</option>
+                                </select>
+
+                                <button class="btn btn-warning w-100 fw-bold" onclick="finCtrl.processarPagamento()">Confirmar Pagamento</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-8">
+                        <h5 class="text-secondary">Histórico de Transações</h5>
+                        <div class="table-responsive">
+                            <table class="table table-sm table-bordered table-hover mt-3">
+                                <thead class="table-light">
+                                    <tr><th>ID Transação</th><th>Aluno</th><th>Plano</th><th>Método</th><th>Status</th></tr>
+                                </thead>
+                                <tbody id="tabela-pagamentos"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <script src="./js/bootstrap.bundle.min.js"></script>
+    <script src="./js/app.js"></script>
+</body>
+</html>
