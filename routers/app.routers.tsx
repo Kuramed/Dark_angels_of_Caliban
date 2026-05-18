@@ -1,75 +1,77 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+// src/services/api.ts
+const getDb = () => {
+    const dbStr = localStorage.getItem('cursos_db_local');
+    if (dbStr) return JSON.parse(dbStr);
+    
+    const initialDb = {
+        usuarios: [], categorias: [], cursos: [], 
+        modulos: [], aulas: [], trilhas: [], 
+        planos: [], matriculas: [], avaliacoes: []
+    };
+    localStorage.setItem('cursos_db_local', JSON.stringify(initialDb));
+    return initialDb;
+};
 
-// --- Módulo CORE ---
-import { UsuarioTable } from '../pages/Core/Usuarios/UsuarioTable';
-import { UsuarioForm } from '../pages/Core/Usuarios/UsuarioForm';
-import { CategoriaTable } from '../pages/Core/Categorias/CategoriaTable';
-import { CategoriaForm } from '../pages/Core/Categorias/CategoriaForm';
-import { CursoTable } from '../pages/Core/Cursos/CursoTable';
-import { CursoForm } from '../pages/Core/Cursos/CursoForm';
+const saveDb = (db: any) => localStorage.setItem('cursos_db_local', JSON.stringify(db));
+const generateId = () => Math.random().toString(36).substring(2, 10);
 
-// --- Módulo CONTEÚDO ---
-import { ModuloTable } from '../pages/Conteudo/Modulos/ModuloTable';
-import { ModuloForm } from '../pages/Conteudo/Modulos/ModuloForm';
-import { AulaTable } from '../pages/Conteudo/Aulas/AulaTable';
-import { AulaForm } from '../pages/Conteudo/Aulas/AulaForm';
+const idKeys: Record<string, string> = {
+    usuarios: 'id_usuario', categorias: 'id_categoria', cursos: 'id_curso',
+    modulos: 'id_modulo', aulas: 'id_aula', trilhas: 'id_trilha',
+    planos: 'id_plano', matriculas: 'id_matricula', avaliacoes: 'id_avaliacao'
+};
 
-// --- Módulo CURADORIA ---
-import { TrilhaTable } from '../pages/Curadoria/Trilhas/TrilhaTable';
-import { TrilhaForm } from '../pages/Curadoria/Trilhas/TrilhaForm';
+export const apiFetch = async (endpoint: string, options?: RequestInit) => {
+    const db = getDb();
+    const method = options?.method || 'GET';
+    
+    const [path, query] = endpoint.split('?');
+    const parts = path.split('/').filter(Boolean); 
+    const table = parts[0]; 
+    const id = parts[1];    
 
-// --- Módulo NEGÓCIO (Ajustado para ficheiros diretos na pasta) ---
-import { PlanoTable } from '../pages/Negocio/PlanoTable';
-import { PlanoForm } from '../pages/Negocio/PlanoForm';
+    if (!db[table]) db[table] = [];
+    const idKey = idKeys[table] || 'id';
 
-// --- Módulo INTERAÇÃO (Ajustado para a sua estrutura real) ---
-import { MatriculaTable } from '../pages/Matriculas/MatriculaTable';
-import { MatriculaForm } from '../pages/Matriculas/MatriculaForm';
-import { AvaliacaoTable } from '../pages/Avaliacoes/AvaliacaoTable';
-import { AvaliacaoForm } from '../pages/Avaliacoes/AvaliacaoForm';
+    await new Promise(res => setTimeout(res, 100));
 
-export function AppRouters() {
-    return (
-        <Routes>
-            <Route path="/" element={<Navigate to="/usuarios" />} />
+    if (method === 'GET') {
+        if (id) {
+            return db[table].find((item: any) => item[idKey] === id || item.id === id);
+        }
+        if (query) {
+            const [key, val] = query.split('=');
+            return db[table].filter((item: any) => item[key] == val);
+        }
+        return db[table];
+    }
 
-            {/* UTILIZADORES */}
-            <Route path="/usuarios" element={<UsuarioTable />} />
-            <Route path="/usuarios/novo" element={<UsuarioForm />} />
-            <Route path="/usuarios/editar/:id" element={<UsuarioForm />} />
+    if (method === 'POST') {
+        const newItem = JSON.parse(options?.body as string);
+        const newId = generateId();
+        newItem[idKey] = newId;
+        newItem.id = newId;
+        
+        db[table].push(newItem);
+        saveDb(db);
+        return newItem;
+    }
 
-            {/* CATEGORIAS */}
-            <Route path="/categorias" element={<CategoriaTable />} />
-            <Route path="/categorias/novo" element={<CategoriaForm />} />
-            <Route path="/categorias/editar/:id" element={<CategoriaForm />} />
+    if (method === 'PUT') {
+        const updatedItem = JSON.parse(options?.body as string);
+        const index = db[table].findIndex((item: any) => item[idKey] === id || item.id === id);
+        if (index !== -1) {
+            db[table][index] = { ...db[table][index], ...updatedItem };
+            saveDb(db);
+            return db[table][index];
+        }
+    }
 
-            {/* CURSOS */}
-            <Route path="/cursos" element={<CursoTable />} />
-            <Route path="/cursos/novo" element={<CursoForm />} />
-            <Route path="/cursos/editar/:id" element={<CursoForm />} />
+    if (method === 'DELETE') {
+        db[table] = db[table].filter((item: any) => item[idKey] !== id && item.id !== id);
+        saveDb(db);
+        return null;
+    }
 
-            {/* CONTEÚDO */}
-            <Route path="/modulos" element={<ModuloTable />} />
-            <Route path="/modulos/novo" element={<ModuloForm />} />
-            <Route path="/modulos/editar/:id" element={<ModuloForm />} />
-            <Route path="/aulas" element={<AulaTable />} />
-            <Route path="/aulas/novo" element={<AulaForm />} />
-            <Route path="/aulas/editar/:id" element={<AulaForm />} />
-
-            {/* TRILHAS E PLANOS */}
-            <Route path="/trilhas" element={<TrilhaTable />} />
-            <Route path="/trilhas/novo" element={<TrilhaForm />} />
-            <Route path="/trilhas/editar/:id" element={<TrilhaForm />} />
-            <Route path="/planos" element={<PlanoTable />} />
-            <Route path="/planos/novo" element={<PlanoForm />} />
-            <Route path="/planos/editar/:id" element={<PlanoForm />} />
-
-            {/* MATRÍCULAS E AVALIAÇÕES */}
-            <Route path="/matriculas" element={<MatriculaTable />} />
-            <Route path="/matriculas/novo" element={<MatriculaForm />} />
-            <Route path="/matriculas/editar/:id" element={<MatriculaForm />} />
-            <Route path="/avaliacoes" element={<AvaliacaoTable />} />
-            <Route path="/avaliacoes/novo" element={<AvaliacaoForm />} />
-        </Routes>
-    );
-}
+    throw new Error(`Método ${method} não suportado.`);
+};
