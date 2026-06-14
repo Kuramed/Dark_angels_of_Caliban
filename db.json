@@ -5,6 +5,5 @@
   "modulos": [],
   "aulas": [],
   "trilhas": [],
-  "planos": [],
-  "$schema": "./node_modules/json-server/schema.json"
+  "planos": []
 }
