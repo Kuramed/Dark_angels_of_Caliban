@@ -49,6 +49,7 @@ export function AppRouters() {
             <Route path="/matriculas/editar/:id" element={<MatriculaForm />} />
             <Route path="/avaliacoes" element={<AvaliacaoTable />} />
             <Route path="/avaliacoes/novo" element={<AvaliacaoForm />} />
+            <Route path="/avaliacoes/editar/:id" element={<AvaliacaoForm />} />
         </Routes>
     );
 }

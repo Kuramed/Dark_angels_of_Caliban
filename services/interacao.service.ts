@@ -1,5 +1,5 @@
 import { apiFetch } from "./api";
-import { IMatricula, IAvaliacao } from "../models/interacao.model";
+import { IAvaliacao, IMatricula } from "../models/interacao.model";
 
 const fixId = (item: any, idName: string) => {
   if (!item) return item;
@@ -11,27 +11,55 @@ export const MatriculaService = {
     const data = await apiFetch("/matriculas");
     return data.map((item: any) => fixId(item, "id_matricula"));
   },
+
   salvar: (matricula: IMatricula): Promise<IMatricula> => {
-    const id = matricula.id_matricula || (matricula as any).id;
-    return apiFetch(id ? `/matriculas/${id}` : "/matriculas", {
-      method: id ? "PUT" : "POST",
-      body: JSON.stringify(matricula),
-    });
+    const id = matricula.id_matricula;
+
+    return apiFetch(
+      id ? `/matriculas/${id}` : "/matriculas",
+      {
+        method: id ? "PUT" : "POST",
+        body: JSON.stringify(matricula),
+      }
+    );
   },
+
   excluir: (id: string): Promise<void> =>
-    apiFetch(`/matriculas/${id}`, { method: "DELETE" }),
+    apiFetch(`/matriculas/${id}`, {
+      method: "DELETE",
+    }),
 };
 
 export const AvaliacaoService = {
-  listarPorCurso: async (id_curso: string): Promise<IAvaliacao[]> => {
-    const url = id_curso ? `/avaliacoes?id_curso=${id_curso}` : "/avaliacoes";
-    const data = await apiFetch(url);
+  listarTodas: async (): Promise<IAvaliacao[]> => {
+    const data = await apiFetch("/avaliacoes");
     return data.map((item: any) => fixId(item, "id_avaliacao"));
   },
-  salvar: (avaliacao: IAvaliacao): Promise<IAvaliacao> => {
-    return apiFetch("/avaliacoes", {
-      method: "POST",
-      body: JSON.stringify(avaliacao),
-    });
+
+  listarPorCurso: async (id_curso: string): Promise<IAvaliacao[]> => {
+    const url = id_curso
+      ? `/avaliacoes?id_curso=${id_curso}`
+      : "/avaliacoes";
+
+    const data = await apiFetch(url);
+
+    return data.map((item: any) => fixId(item, "id_avaliacao"));
   },
+
+  salvar: (avaliacao: IAvaliacao): Promise<IAvaliacao> => {
+    const id = avaliacao.id_avaliacao;
+
+    return apiFetch(
+      id ? `/avaliacoes/${id}` : "/avaliacoes",
+      {
+        method: id ? "PUT" : "POST",
+        body: JSON.stringify(avaliacao),
+      }
+    );
+  },
+
+  excluir: (id: string): Promise<void> =>
+    apiFetch(`/avaliacoes/${id}`, {
+      method: "DELETE",
+    }),
 };
