@@ -43,11 +43,14 @@ export function TrilhaTable() {
                 </Link>
                 <button
                   className="btn btn-sm btn-danger"
-                  onClick={() =>
-                    TrilhaService.excluir(trilha.id_trilha!).then(() =>
-                      window.location.reload(),
-                    )
-                  }
+                  onClick={async () => {
+                    if (!trilha.id_trilha) return;
+
+                    await TrilhaService.excluir(trilha.id_trilha);
+
+                    const listaAtualizada = await TrilhaService.listarTodas();
+                    setTrilhas(listaAtualizada);
+                  }}
                 >
                   Eliminar
                 </button>

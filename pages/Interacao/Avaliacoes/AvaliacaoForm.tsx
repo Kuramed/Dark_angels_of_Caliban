@@ -26,12 +26,20 @@ export function AvaliacaoForm() {
     if (id) {
       AvaliacaoService.listarTodas().then((lista) => {
         const item = lista.find(
-          (a) => a.id_avaliacao === id
+          (a) =>
+            String(a.id_avaliacao) === String(id)
         );
 
-        if (item) setFormData(item);
+        if (item) {
+          setFormData(item);
+        }
       });
     }
+    if (id) {
+  AvaliacaoService.buscarPorId(id)
+    .then(setFormData)
+    .catch(console.error);
+}
   }, [id]);
 
   const handleSubmit = async (e: FormEvent) => {
@@ -52,64 +60,72 @@ export function AvaliacaoForm() {
         onSubmit={handleSubmit}
         className="card p-4 mt-3 shadow-sm"
       >
-        <div className="mb-3">
-          <label className="form-label">
-            Aluno
-          </label>
+        <div className="row">
+          <div className="col-md-6 mb-3">
+            <label className="form-label">
+              Aluno
+            </label>
 
-          <select
-            className="form-select"
-            value={formData.id_usuario}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                id_usuario: e.target.value,
-              })
-            }
-            required
-          >
-            <option value="">Selecione...</option>
+            <select
+              className="form-select"
+              value={formData.id_usuario}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  id_usuario: e.target.value,
+                })
+              }
+              required
+            >
+              <option value="">
+                Selecione...
+              </option>
 
-            {usuarios
-              .filter((u) => u.tipo === "Aluno")
-              .map((aluno) => (
+              {usuarios
+                .filter(
+                  (u) => u.tipo === "Aluno"
+                )
+                .map((aluno) => (
+                  <option
+                    key={aluno.id_usuario}
+                    value={aluno.id_usuario}
+                  >
+                    {aluno.nomeCompleto}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <div className="col-md-6 mb-3">
+            <label className="form-label">
+              Curso
+            </label>
+
+            <select
+              className="form-select"
+              value={formData.id_curso}
+              onChange={(e) =>
+                setFormData({
+                  ...formData,
+                  id_curso: e.target.value,
+                })
+              }
+              required
+            >
+              <option value="">
+                Selecione...
+              </option>
+
+              {cursos.map((curso) => (
                 <option
-                  key={aluno.id_usuario}
-                  value={aluno.id_usuario}
+                  key={curso.id_curso}
+                  value={curso.id_curso}
                 >
-                  {aluno.nomeCompleto}
+                  {curso.titulo}
                 </option>
               ))}
-          </select>
-        </div>
-
-        <div className="mb-3">
-          <label className="form-label">
-            Curso
-          </label>
-
-          <select
-            className="form-select"
-            value={formData.id_curso}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                id_curso: e.target.value,
-              })
-            }
-            required
-          >
-            <option value="">Selecione...</option>
-
-            {cursos.map((curso) => (
-              <option
-                key={curso.id_curso}
-                value={curso.id_curso}
-              >
-                {curso.titulo}
-              </option>
-            ))}
-          </select>
+            </select>
+          </div>
         </div>
 
         <div className="mb-3">
@@ -119,9 +135,9 @@ export function AvaliacaoForm() {
 
           <input
             type="number"
+            className="form-control"
             min={1}
             max={5}
-            className="form-control"
             value={formData.nota}
             onChange={(e) =>
               setFormData({
@@ -129,6 +145,7 @@ export function AvaliacaoForm() {
                 nota: Number(e.target.value),
               })
             }
+            required
           />
         </div>
 
@@ -150,12 +167,24 @@ export function AvaliacaoForm() {
           />
         </div>
 
-        <button
-          type="submit"
-          className="btn btn-success"
-        >
-          Guardar
-        </button>
+        <div className="d-flex gap-2">
+          <button
+            type="submit"
+            className="btn btn-success"
+          >
+            Guardar
+          </button>
+
+          <button
+            type="button"
+            className="btn btn-secondary"
+            onClick={() =>
+              navigate("/avaliacoes")
+            }
+          >
+            Cancelar
+          </button>
+        </div>
       </form>
     </div>
   );

@@ -20,36 +20,50 @@ import { AvaliacaoTable } from '../pages/Interacao/Avaliacoes/AvaliacaoTable';
 import { AvaliacaoForm } from '../pages/Interacao/Avaliacoes/AvaliacaoForm';
 
 export function AppRouters() {
-    return (
-        <Routes>
-            <Route path="/" element={<Navigate to="/usuarios" />} />
-            <Route path="/usuarios" element={<UsuarioTable />} />
-            <Route path="/usuarios/novo" element={<UsuarioForm />} />
-            <Route path="/usuarios/editar/:id" element={<UsuarioForm />} />
-            <Route path="/categorias" element={<CategoriaTable />} />
-            <Route path="/categorias/novo" element={<CategoriaForm />} />
-            <Route path="/categorias/editar/:id" element={<CategoriaForm />} />
-            <Route path="/cursos" element={<CursoTable />} />
-            <Route path="/cursos/novo" element={<CursoForm />} />
-            <Route path="/cursos/editar/:id" element={<CursoForm />} />
-            <Route path="/modulos" element={<ModuloTable />} />
-            <Route path="/modulos/novo" element={<ModuloForm />} />
-            <Route path="/modulos/editar/:id" element={<ModuloForm />} />
-            <Route path="/aulas" element={<AulaTable />} />
-            <Route path="/aulas/novo" element={<AulaForm />} />
-            <Route path="/aulas/editar/:id" element={<AulaForm />} />
-            <Route path="/trilhas" element={<TrilhaTable />} />
-            <Route path="/trilhas/novo" element={<TrilhaForm />} />
-            <Route path="/trilhas/editar/:id" element={<TrilhaForm />} />
-            <Route path="/planos" element={<PlanoTable />} />
-            <Route path="/planos/novo" element={<PlanoForm />} />
-            <Route path="/planos/editar/:id" element={<PlanoForm />} />
-            <Route path="/matriculas" element={<MatriculaTable />} />
-            <Route path="/matriculas/novo" element={<MatriculaForm />} />
-            <Route path="/matriculas/editar/:id" element={<MatriculaForm />} />
-            <Route path="/avaliacoes" element={<AvaliacaoTable />} />
-            <Route path="/avaliacoes/novo" element={<AvaliacaoForm />} />
-            <Route path="/avaliacoes/editar/:id" element={<AvaliacaoForm />} />
-        </Routes>
-    );
+  return (
+    <Routes>
+      <Route path="/" element={<Navigate to="/usuarios" />} />
+
+      {/* Core */}
+      <Route path="/usuarios" element={<UsuarioTable />} />
+      <Route path="/usuarios/novo" element={<UsuarioForm />} />
+      <Route path="/usuarios/editar/:id" element={<UsuarioForm />} />
+
+      <Route path="/categorias" element={<CategoriaTable />} />
+      <Route path="/categorias/novo" element={<CategoriaForm />} />
+      <Route path="/categorias/editar/:id" element={<CategoriaForm />} />
+
+      <Route path="/cursos" element={<CursoTable />} />
+      <Route path="/cursos/novo" element={<CursoForm />} />
+      <Route path="/cursos/editar/:id" element={<CursoForm />} />
+
+      {/* Conteúdo */}
+      <Route path="/modulos" element={<ModuloTable />} />
+      <Route path="/modulos/novo" element={<ModuloForm />} />
+      <Route path="/modulos/editar/:id" element={<ModuloForm />} />
+
+      <Route path="/aulas" element={<AulaTable />} />
+      <Route path="/aulas/novo" element={<AulaForm />} />
+      <Route path="/aulas/editar/:id" element={<AulaForm />} />
+
+      {/* Curadoria */}
+      <Route path="/trilhas" element={<TrilhaTable />} />
+      <Route path="/trilhas/novo" element={<TrilhaForm />} />
+      <Route path="/trilhas/editar/:id" element={<TrilhaForm />} />
+
+      {/* Negócio */}
+      <Route path="/planos" element={<PlanoTable />} />
+      <Route path="/planos/novo" element={<PlanoForm />} />
+      <Route path="/planos/editar/:id" element={<PlanoForm />} />
+
+      {/* Interação */}
+      <Route path="/matriculas" element={<MatriculaTable />} />
+      <Route path="/matriculas/novo" element={<MatriculaForm />} />
+      <Route path="/matriculas/editar/:id" element={<MatriculaForm />} />
+
+      <Route path="/avaliacoes" element={<AvaliacaoTable />} />
+      <Route path="/avaliacoes/novo" element={<AvaliacaoForm />} />
+      <Route path="/avaliacoes/editar/:id" element={<AvaliacaoForm />} />
+    </Routes>
+  );
 }

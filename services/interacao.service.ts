@@ -3,13 +3,22 @@ import { IAvaliacao, IMatricula } from "../models/interacao.model";
 
 const fixId = (item: any, idName: string) => {
   if (!item) return item;
-  return { ...item, [idName]: item[idName] || item.id };
+
+  return {
+    ...item,
+    [idName]: item[idName] || item.id,
+  };
 };
 
 export const MatriculaService = {
   listarTodas: async (): Promise<IMatricula[]> => {
     const data = await apiFetch("/matriculas");
     return data.map((item: any) => fixId(item, "id_matricula"));
+  },
+
+  buscarPorId: async (id: string): Promise<IMatricula> => {
+    const data = await apiFetch(`/matriculas/${id}`);
+    return fixId(data, "id_matricula");
   },
 
   salvar: (matricula: IMatricula): Promise<IMatricula> => {
@@ -33,17 +42,29 @@ export const MatriculaService = {
 export const AvaliacaoService = {
   listarTodas: async (): Promise<IAvaliacao[]> => {
     const data = await apiFetch("/avaliacoes");
-    return data.map((item: any) => fixId(item, "id_avaliacao"));
+
+    return data.map((item: any) =>
+      fixId(item, "id_avaliacao")
+    );
   },
 
-  listarPorCurso: async (id_curso: string): Promise<IAvaliacao[]> => {
+  listarPorCurso: async (
+    id_curso: string
+  ): Promise<IAvaliacao[]> => {
     const url = id_curso
       ? `/avaliacoes?id_curso=${id_curso}`
       : "/avaliacoes";
 
     const data = await apiFetch(url);
 
-    return data.map((item: any) => fixId(item, "id_avaliacao"));
+    return data.map((item: any) =>
+      fixId(item, "id_avaliacao")
+    );
+  },
+
+  buscarPorId: async (id: string): Promise<IAvaliacao> => {
+    const data = await apiFetch(`/avaliacoes/${id}`);
+    return fixId(data, "id_avaliacao");
   },
 
   salvar: (avaliacao: IAvaliacao): Promise<IAvaliacao> => {

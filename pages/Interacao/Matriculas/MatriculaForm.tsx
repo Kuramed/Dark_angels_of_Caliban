@@ -23,11 +23,10 @@ export function MatriculaForm() {
     UsuarioService.listarTodos().then(setUsuarios);
 
     if (id) {
-      MatriculaService.listarTodas().then((lista) => {
-        const item = lista.find((m) => m.id_matricula === id);
-        if (item) setFormData(item);
-      });
-    }
+  MatriculaService.buscarPorId(id)
+    .then(setFormData)
+    .catch(console.error);
+}
   }, [id]);
 
   const handleSubmit = async (e: FormEvent) => {

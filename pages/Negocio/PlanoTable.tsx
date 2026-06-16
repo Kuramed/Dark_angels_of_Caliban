@@ -40,7 +40,15 @@ export function PlanoTable() {
                 </Link>
                 <button
                   className="btn btn-outline-danger btn-sm"
-                  onClick={() => PlanoService.excluir(plano.id_plano!)}
+                  onClick={async () => {
+                    if (!window.confirm("Deseja eliminar este plano?")) return;
+
+                    await PlanoService.excluir(plano.id_plano!);
+
+                    setPlanos(
+                      planos.filter((p) => p.id_plano !== plano.id_plano),
+                    );
+                  }}
                 >
                   Eliminar
                 </button>

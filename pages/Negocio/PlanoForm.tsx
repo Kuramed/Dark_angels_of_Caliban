@@ -15,13 +15,24 @@ export function PlanoForm() {
   });
 
   useEffect(() => {
-    if (id) {
-      PlanoService.listarTodos().then((lista) => {
-        const item = lista.find((p) => p.id_plano === id);
-        if (item) setFormData(item);
-      });
-    }
-  }, [id]);
+  if (id) {
+    PlanoService.listarTodos().then((lista) => {
+      const item = lista.find(
+        (p) => String(p.id_plano) === String(id)
+      );
+
+      if (item) {
+        setFormData({
+          id_plano: item.id_plano,
+          nome: item.nome,
+          preco: item.preco,
+          duracaoMeses: item.duracaoMeses,
+          descricao: item.descricao || "",
+        });
+      }
+    });
+  }
+}, [id]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
