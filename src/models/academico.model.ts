@@ -1,21 +1,10 @@
-export interface Lesson {
-  id: number;
-  moduleId: number;
-  title: string;
-  contentType: 'Vídeo' | 'Texto' | 'Quiz';
-  contentUrl: string;
-  durationMinutes: number;
-  order: number;
-}
+import { z } from "zod";
 
-export interface Module {
-  id: number;
-  courseId: number;
-  title: string;
-  order: number;
-  lessons?: Lesson[];
-}
+export const TrilhaCursoSchema = z.object({
+  id_vinculo: z.string().optional(),
+  id_trilha: z.string().min(1, "A seleção de uma trilha é obrigatória"),
+  id_curso: z.string().min(1, "A seleção de um curso é obrigatória"),
+  ordem: z.coerce.number().min(1, "A ordem de apresentação é obrigatória"),
+});
 
-export interface CourseDetail extends Course {
-  modules?: Module[];
-}
+export type ITrilhaCurso = z.infer<typeof TrilhaCursoSchema>;

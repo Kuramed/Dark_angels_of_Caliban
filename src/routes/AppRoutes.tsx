@@ -12,6 +12,7 @@ import { CourseManagement } from '../pages/CourseManagement';
 import { ModuleLessonManagement } from '../pages/ModuleLessonManagement';
 import { LessonViewer } from '../pages/LessonViewer';
 import { TrilhasManagement } from '../pages/TrilhasManagement';
+import { CourseReview } from '../pages/CourseReview';
 
 export function AppRoutes() {
   return (
@@ -31,6 +32,7 @@ export function AppRoutes() {
           <Route path="/admin/modules-lessons" element={<ModuleLessonManagement />} />
           <Route path="/lessons/:id" element={<LessonViewer />} />
           <Route path="/admin/trilhas" element={<TrilhasManagement />} />
+          <Route path="/reviews" element={<CourseReview />} />
         </Routes>
       </div>
     </BrowserRouter>

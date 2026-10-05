@@ -32,7 +32,7 @@ export function CategoriaForm() {
       <h2>{id ? "Editar Categoria" : "Nova Categoria"}</h2>
 
       <form onSubmit={handleSubmit} className="card p-4 mt-3 shadow-sm">
-        <div className="mb-3">
+        <div className="mb-3">pages
           <label className="form-label">Nome da Categoria</label>
           <input
             type="text"
