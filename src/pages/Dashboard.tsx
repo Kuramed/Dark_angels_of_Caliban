@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { api } from '../services/api';
 
+// Interface para tipar os usuários
 interface User {
   id: number;
   name: string;
@@ -9,87 +10,134 @@ interface User {
   createdAt: string;
 }
 
+// Interface para tipar os cursos
+interface Curso {
+  id: number;
+  nome: string; 
+  descricao: string;
+}
+
 export function Dashboard() {
   const [users, setUsers] = useState<User[]>([]);
+  const [cursos, setCursos] = useState<Curso[]>([]);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchUsers = async () => {
+    // PROTEÇÃO DE ROTA: Verifica se existe um token salvo
+    const token = localStorage.getItem('access_token');
+    if (!token) {
+      navigate('/login');
+      return; 
+    }
+
+    const fetchData = async () => {
       try {
-        // O interceptor do axios adiciona automaticamente o Bearer Token do localStorage
-        const response = await api.get('/users');
-        setUsers(response.data);
+        // Busca usuários e cursos simultaneamente
+        const [usersResponse, cursosResponse] = await Promise.all([
+          api.get('/users'),
+          api.get('/cursos')
+        ]);
+        
+        // LOG PARA DEBUG: Veja no console do navegador o que está chegando
+        console.log('Resposta de Usuários da API:', usersResponse.data);
+        console.log('Resposta de Cursos da API:', cursosResponse.data);
+        
+        // Salva os dados no estado
+        setUsers(usersResponse.data);
+        setCursos(cursosResponse.data);
+
       } catch (err: any) {
+        // Se o token for inválido ou expirado (Status 401)
         if (err.response?.status === 401) {
-          // Se não estiver autorizado, limpa o token e redireciona para o login
           localStorage.removeItem('access_token');
           navigate('/login');
         } else {
-          setError('Erro ao carregar os dados do painel.');
+          setError('Erro ao carregar os dados da plataforma.');
         }
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchData();
   }, [navigate]);
+
+  if (loading) return <div className="container mt-4">Carregando painel...</div>;
+  if (error) return <div className="container mt-4 text-danger">{error}</div>;
 
   return (
     <div className="container mt-4">
-      <div className="row">
-        <div className="col-12">
-          <h2 className="mb-4">Painel de Controle (Dashboard)</h2>
-          <p className="text-muted">Bem-vindo à área restrita da Plataforma de Cursos.</p>
+      <h2>Painel de Controle (Dashboard)</h2>
+      <p>Bem-vindo à área restrita da Plataforma de Cursos.</p>
 
-          {error && <div className="alert alert-danger">{error}</div>}
+      {/* Tabela de Usuários */}
+      <div className="card mb-4">
+        <div className="card-header fw-bold">Usuários Cadastrados na Plataforma</div>
+        <div className="card-body">
+          <table className="table table-striped table-hover mb-0">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>E-mail</th>
+                <th>Data de Cadastro</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Array.isArray(users) && users.length > 0 ? (
+                users.map((user) => (
+                  <tr key={user.id}>
+                    <td>{user.id}</td>
+                    <td>{user.name}</td>
+                    <td>{user.email}</td>
+                    <td>{user.createdAt}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={4} className="text-center text-muted">
+                    Nenhum usuário cadastrado.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-          {loading ? (
-            <div className="text-center my-5">
-              <div className="spinner-border text-primary" role="status">
-                <span className="visually-hidden">Carregando...</span>
-              </div>
-            </div>
-          ) : (
-            <div className="card shadow-sm">
-              <div className="card-header bg-white">
-                <h5 className="mb-0">Usuários Cadastrados na Plataforma</h5>
-              </div>
-              <div className="card-body p-0">
-                <div className="table-responsive">
-                  <table className="table table-hover mb-0 align-middle">
-                    <thead className="table-light">
-                      <tr>
-                        <th>ID</th>
-                        <th>Nome</th>
-                        <th>E-mail</th>
-                        <th>Data de Cadastro</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {users.map((user) => (
-                        <tr key={user.id}>
-                          <td>{user.id}</td>
-                          <td>{user.name}</td>
-                          <td>{user.email}</td>
-                          <td>{new Date(user.createdAt).toLocaleDateString('pt-BR')}</td>
-                        </tr>
-                      ))}
-                      {users.length === 0 && (
-                        <tr>
-                          <td colSpan={4} className="text-center py-3 text-muted">
-                            Nenhum usuário encontrado.
-                          </td>
-                        </tr>
-                      )}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          )}
+      {/* Tabela de Cursos */}
+      <div className="card mb-4">
+        <div className="card-header fw-bold">Cursos Disponíveis</div>
+        <div className="card-body">
+          <table className="table table-striped table-hover mb-0">
+            <thead>
+              <tr>
+                <th>ID</th>
+                <th>Nome do Curso</th>
+                <th>Descrição</th>
+              </tr>
+            </thead>
+            <tbody>
+              {/* Verificação de segurança: checa se 'cursos' é realmente uma lista */}
+              {Array.isArray(cursos) && cursos.length > 0 ? (
+                cursos.map((curso) => (
+                  <tr key={curso.id}>
+                    <td>{curso.id}</td>
+                    <td>{curso.nome}</td> 
+                    <td>{curso.descricao}</td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan={3} className="text-center text-muted">
+                    Nenhum curso encontrado ou formato de dado incorreto (verifique o console).
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>

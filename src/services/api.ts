@@ -1,7 +1,8 @@
 import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: 'http://localhost:3000',
+  // Remova o localhost e cole o URL do Codespaces (sem a barra final)
+  baseURL: 'https://orange-couscous-v6wp55rx56692x7q9-3000.app.github.dev',
 });
 
 // Interceptor opcional para injetar o Token JWT automaticamente nas requisições protegidas
